@@ -3,7 +3,9 @@
 #include "Transaction.h"
 #include <vector>
 #include <cstdlib>
-
+#include <iomanip>
+#include <sstream>
+#include <fstream>
 void clearScreen()
 {
 #ifdef _WIN32
@@ -12,6 +14,7 @@ void clearScreen()
     system("clear");
 #endif
 }
+
 // Helper function to calculate padding and print centered text
 void printCentered(const std::string &text, int width = 80)
 {
@@ -22,6 +25,34 @@ void printCentered(const std::string &text, int width = 80)
     }
     int padding = (width - text.length()) / 2;
     std::cout << std::string(padding, ' ') << text << '\n';
+}
+
+void showSummary(const std::vector<Transaction> &transactions)
+{
+    double income = 0;
+    double expense = 0;
+
+    for (const Transaction &t : transactions)
+    {
+        if (t.getType() == "Income")
+        {
+            income += t.getAmount();
+        }
+        else if (t.getType() == "Expense")
+        {
+            expense += t.getAmount();
+        }
+    }
+
+    std::ostringstream incStr, expStr, netStr;
+    incStr << std::fixed << std::setprecision(2) << income;
+    expStr << std::fixed << std::setprecision(2) << expense;
+    netStr << std::fixed << std::setprecision(2) << (income - expense);
+
+    printCentered("----------Monthly Summary----------\n");
+    printCentered("Total Income  : Rs. " + incStr.str() + "\n");
+    printCentered("Total Expense : Rs. " + expStr.str() + "\n");
+    printCentered("Net Balance   : Rs. " + netStr.str() + "\n");
 }
 
 int main()
@@ -92,6 +123,7 @@ int main()
         }
         case 3:
             std::cout << "\nViewing Summary......\n";
+            showSummary(transactions);
             break;
         case 4:
             std::cout << "\nExiting......\n";

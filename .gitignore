@@ -1,0 +1,8 @@
+# Ignore all executable files
+*.exe
+
+# Ignore VS Code workspace settings
+.vscode/
+
+# Ignore generated data
+data/

@@ -13,4 +13,12 @@ public:
     Transaction(int id, std::string type, double amount, std::string category, std::string description);
 
     void display() const;
+
+    std::string getType() const;
+
+    double getAmount() const;
+
+    std::string getCategory() const;
+    std::string getDescription() const;
+    int getID() const;
 };
