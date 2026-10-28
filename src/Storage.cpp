@@ -1,13 +1,15 @@
 #include "Storage.h"
 #include <iostream>
 #include <fstream>
-static void saveToFile(const std::string &filename, const std::vector<Transaction> &transactions)
+#include <sstream>
+
+void Storage::saveToFile(const std::string &filename, const std::vector<Transaction> &transactions)
 {
     std::ofstream outFile(filename);
 
     if (!outFile.is_open())
     {
-        std::cerr << "Failed to open  file" << std::endl;
+        std::cerr << "Failed to open  file for writing" << std::endl;
         return;
     }
 
@@ -18,8 +20,34 @@ static void saveToFile(const std::string &filename, const std::vector<Transactio
     outFile.close();
 }
 
-static std::vector<Transaction> loadFromFile(const std::string &filename)
+std::vector<Transaction> Storage::loadFromFile(const std::string &filename)
 {
     std::vector<Transaction> transactions;
     std::ifstream inFile(filename);
+
+    if (!inFile.is_open())
+    {
+        return transactions;
+    }
+    std::string line;
+
+    while (std::getline(inFile, line))
+    {
+        if (line.empty())
+            continue;
+
+        std::stringstream ss(line); // reads string like an input stream
+        std::string idStr, type, amountStr, category, description;
+        std::getline(ss, idStr, '|');
+        std::getline(ss, type, '|');
+        std::getline(ss, amountStr, '|');
+        std::getline(ss, category, '|');
+        std::getline(ss, description, '|');
+        int id = std::stoi(idStr);
+        double amount = std::stoi(amountStr);
+
+        transactions.push_back(Transaction(id, type, amount, category, description));
+    }
+    inFile.close();
+    return transactions;
 }

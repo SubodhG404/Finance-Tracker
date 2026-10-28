@@ -1,0 +1,5 @@
+1|Income|150000|Salary|Monthly Salary
+2|Expense|2000|Clothing|Jeans Pant
+3|Income|2|Salary|Monthly Salary
+4|Expense|5000|Food|Family Dinner
+5|Expense|3000|Entertainment|Movies
