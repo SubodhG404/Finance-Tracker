@@ -15,7 +15,7 @@ void Storage::saveToFile(const std::string &filename, const std::vector<Transact
 
     for (auto &tx : transactions)
     {
-        outFile << tx.getID() << "|" << tx.getType() << "|" << tx.getAmount() << "|" << tx.getCategory() << "|" << tx.getDescription() << "\n";
+        outFile << tx.getID() << "|" << tx.getType() << "|" << tx.getAmount() << "|" << tx.getCategory() << "|" << tx.getDescription() << '|' << tx.getDate() << "\n";
     }
     outFile.close();
 }
@@ -37,16 +37,17 @@ std::vector<Transaction> Storage::loadFromFile(const std::string &filename)
             continue;
 
         std::stringstream ss(line); // reads string like an input stream
-        std::string idStr, type, amountStr, category, description;
+        std::string idStr, type, amountStr, category, description, date;
         std::getline(ss, idStr, '|');
         std::getline(ss, type, '|');
         std::getline(ss, amountStr, '|');
         std::getline(ss, category, '|');
         std::getline(ss, description, '|');
+        std::getline(ss, date, '|');
         int id = std::stoi(idStr);
         double amount = std::stoi(amountStr);
 
-        transactions.push_back(Transaction(id, type, amount, category, description));
+        transactions.push_back(Transaction(id, type, amount, category, description, date));
     }
     inFile.close();
     return transactions;

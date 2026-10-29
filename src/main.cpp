@@ -31,7 +31,8 @@ int main()
             std::cin.ignore(); // clearing input buffer
             std::cout << "Enter Description:";
             std::getline(std::cin, description);
-            f.addTransaction(description, amount, type, category);
+
+            f.addTransaction(description, amount, type, category, getCurrentDate());
 
             break;
         }
@@ -41,12 +42,30 @@ int main()
             break;
         }
         case 3:
-            f.calculateSummary();
+        {
+            std::string month;
+            std::cout << "Enter Month in YYYY-MM format:";
+            std::cin >> month;
+            f.displayTransactionsByMonth(month);
             break;
+        }
         case 4:
+            f.calculateSummary(); // all time
+            break;
+        case 5:
+        {
+            std::string month;
+            std::cout << "Enter Month in YYYY-MM format:";
+            std::cin >> month;
+            f.calculateMonthlySummary(month);
+            break;
+        }
+        case 6:
+        {
             std::cout << "\nExiting......\n";
             f.saveTransactions();
             break;
+        }
         default:
             std::cout << "\nInvalid choice. Please try again.\n";
             break;
