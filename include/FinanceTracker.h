@@ -9,6 +9,7 @@ class FinanceTracker
 private:
     std::vector<Transaction> transactions;
     std::string filename;
+    std::string budgetsFilename;
     int nextId;
     std::map<std::string, double> monthlyBudget;
 
@@ -16,7 +17,7 @@ private:
     bool containsIgnoreCase(const std::string &text, const std::string &query) const;
 
 public:
-    explicit FinanceTracker(const std::string &storageFilename = "transactions.txt");
+    explicit FinanceTracker(const std::string &storageFilename = "transactions.txt", const std::string &budgetsStorageFilename = "budgets.txt");
 
     // Core Business Logic Methods
     void addTransaction(const std::string &description, double amount, const std::string &type, const std::string &category, const std::string &date);
@@ -25,6 +26,7 @@ public:
 
     // Persistence Methods
     bool saveTransactions() const;
+    bool saveMonthlyBudgets() const;
 
     // Getter for transactions (useful for future features like filtering/searching)
     const std::vector<Transaction> &getTransactions() const;

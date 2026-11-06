@@ -53,3 +53,47 @@ std::vector<Transaction> Storage::loadFromFile(const std::string &filename)
     inFile.close();
     return transactions;
 }
+
+bool Storage::saveBudgets(const std::string &filename, const std::map<std::string, double> &budgets)
+{
+    std::ofstream outfile(filename);
+
+    if (!outfile.is_open())
+    {
+        std::cerr << "Failed to open  file for writing" << std::endl;
+        return false;
+    }
+
+    for (auto &budget : budgets)
+    {
+        outfile << budget.first << "|" << budget.second << "\n";
+    }
+
+    outfile.close();
+    return true;
+}
+
+std::map<std::string, double> Storage::loadBudgets(const std::string &filename)
+{
+    std::ifstream infile(filename);
+    std::map<std::string, double> budgets;
+    std::string line;
+
+    if (!infile.is_open())
+    {
+        return budgets;
+    }
+
+    while (std::getline(infile, line))
+    {
+        if (line.empty())
+            continue;
+        std::stringstream ss(line);
+        std::string month, budgetStr;
+        std::getline(ss, month, '|');
+        std::getline(ss, budgetStr);
+        budgets[month] = std::stod(budgetStr);
+    }
+
+    return budgets;
+}

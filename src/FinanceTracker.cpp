@@ -8,9 +8,10 @@
 #include <fstream>
 #include <string>
 #include <algorithm>
-FinanceTracker::FinanceTracker(const std::string &storageFilename) : filename(storageFilename), nextId(1)
+FinanceTracker::FinanceTracker(const std::string &storageFilename, const std::string &budgetsStorageFilename) : filename(storageFilename), budgetsFilename(budgetsStorageFilename), nextId(1)
 {
-    transactions = Storage::loadFromFile(storageFilename);
+    transactions = Storage::loadFromFile(filename);
+    monthlyBudget = Storage::loadBudgets(budgetsFilename);
     upadateNextId();
 }
 
@@ -224,4 +225,8 @@ void FinanceTracker::calculateMonthlySummary(const std::string &month) const
 bool FinanceTracker::saveTransactions() const
 {
     return Storage::saveToFile(filename, transactions);
+}
+bool FinanceTracker::saveMonthlyBudgets() const
+{
+    return Storage::saveBudgets(budgetsFilename, monthlyBudget);
 }

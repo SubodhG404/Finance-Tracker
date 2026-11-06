@@ -101,6 +101,7 @@ int main()
         {
             std::cout << "\nExiting......\n";
             f.saveTransactions();
+            f.saveMonthlyBudgets();
             break;
         }
         default:
