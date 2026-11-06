@@ -12,7 +12,10 @@ void printMenu()
     printCentered("3. View Transactions by Month", consoleWidth);
     printCentered("4. All-Time Summary", consoleWidth);
     printCentered("5. Monthly Summary", consoleWidth);
-    printCentered("6. Exit", consoleWidth);
+    printCentered("6.Search/Filter Transactions", consoleWidth);
+    printCentered("7.Set Monthly Budget", consoleWidth);
+    printCentered("8.Check Monthly Budget", consoleWidth);
+    printCentered("9.Exit", consoleWidth);
     printCentered("====================================", consoleWidth);
 
     // Center the prompt spacing

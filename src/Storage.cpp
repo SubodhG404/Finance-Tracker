@@ -3,14 +3,14 @@
 #include <fstream>
 #include <sstream>
 
-void Storage::saveToFile(const std::string &filename, const std::vector<Transaction> &transactions)
+bool Storage::saveToFile(const std::string &filename, const std::vector<Transaction> &transactions)
 {
     std::ofstream outFile(filename);
 
     if (!outFile.is_open())
     {
         std::cerr << "Failed to open  file for writing" << std::endl;
-        return;
+        return false;
     }
 
     for (auto &tx : transactions)
@@ -18,6 +18,7 @@ void Storage::saveToFile(const std::string &filename, const std::vector<Transact
         outFile << tx.getID() << "|" << tx.getType() << "|" << tx.getAmount() << "|" << tx.getCategory() << "|" << tx.getDescription() << '|' << tx.getDate() << "\n";
     }
     outFile.close();
+    return true;
 }
 
 std::vector<Transaction> Storage::loadFromFile(const std::string &filename)
@@ -45,7 +46,7 @@ std::vector<Transaction> Storage::loadFromFile(const std::string &filename)
         std::getline(ss, description, '|');
         std::getline(ss, date, '|');
         int id = std::stoi(idStr);
-        double amount = std::stoi(amountStr);
+        double amount = std::stod(amountStr);
 
         transactions.push_back(Transaction(id, type, amount, category, description, date));
     }

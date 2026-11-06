@@ -3,15 +3,17 @@
 #include <string>
 #include "Transaction.h"
 #include "Storage.h"
-
+#include <map>
 class FinanceTracker
 {
 private:
     std::vector<Transaction> transactions;
     std::string filename;
     int nextId;
+    std::map<std::string, double> monthlyBudget;
 
     void upadateNextId();
+    bool containsIgnoreCase(const std::string &text, const std::string &query) const;
 
 public:
     explicit FinanceTracker(const std::string &storageFilename = "transactions.txt");
@@ -29,4 +31,8 @@ public:
 
     void displayTransactionsByMonth(const std::string &month) const;
     void calculateMonthlySummary(const std::string &month) const;
+
+    void searchTransactions(const std::string &query) const;
+    void setBudget(const std::string &month, double amount);
+    void checkBudget(const std::string &month) const;
 };

@@ -1,13 +1,14 @@
 #include <iostream>
 #include "FinanceTracker.h"
+#include "Storage.h"
 #include "Utils.h"
 #include <cstdlib>
 #include <iomanip>
 #include <sstream>
 #include <fstream>
 #include <string>
-
-FinanceTracker::FinanceTracker(const std::string &storageFilename)
+#include <algorithm>
+FinanceTracker::FinanceTracker(const std::string &storageFilename) : filename(storageFilename), nextId(1)
 {
     transactions = Storage::loadFromFile(storageFilename);
     upadateNextId();
@@ -67,7 +68,7 @@ void FinanceTracker::displayTransactionsByMonth(const std::string &month) const
         for (const auto &tx : transactions)
         {
             // compare YYYY-MM part for YYYY-MM-DD
-            if (tx.getDate().length() >= 7 && tx.getDate().substr() == month)
+            if (tx.getDate().length() >= 7 && tx.getDate().substr(0, 7) == month)
             {
                 tx.display();
                 found = true;
@@ -79,6 +80,82 @@ void FinanceTracker::displayTransactionsByMonth(const std::string &month) const
             std::cout << " No Transactions for the Month " << month << "\n";
         }
         std::cout << "--------------------------------------------";
+    }
+}
+bool FinanceTracker::containsIgnoreCase(const std::string &text, const std::string &query) const
+{
+    std::string textLower = text;
+    std::string queryLower = query;
+
+    std::transform(textLower.begin(), textLower.end(), textLower.begin(), ::tolower);
+    std::transform(queryLower.begin(), queryLower.end(), queryLower.begin(), ::tolower);
+
+    return textLower.find(queryLower) != std::string::npos;
+}
+
+void FinanceTracker::searchTransactions(const std::string &query) const
+{
+    std::cout << "Search Results for Query: " << query << "\n";
+    bool found = false;
+
+    for (const auto &t : transactions)
+    {
+        if (containsIgnoreCase(t.getCategory(), query) || containsIgnoreCase(t.getDescription(), query))
+        {
+            t.display();
+            found = true;
+        }
+    }
+
+    if (!found)
+    {
+        std::cout << "Query Results not found!\n";
+    }
+}
+
+void FinanceTracker::setBudget(const std::string &month, double amount)
+{
+    if (amount < 0)
+    {
+        std::cout << "Budget is invalid. I must be non-negative!" << std::endl;
+        return;
+    }
+
+    monthlyBudget[month] = amount;
+    std::cout << "Budget of $" << std::fixed << std::setprecision(2) << amount << " set for " << month << "Successfully!" << std::endl;
+}
+
+void FinanceTracker::checkBudget(const std::string &month) const
+{
+    auto it = monthlyBudget.find(month);
+    if (it == monthlyBudget.end())
+    {
+        std::cout << "No budget set for month " << month << std::endl;
+        return;
+    }
+    double budgetLimit = it->second;
+    double totalExpense = 0;
+    for (auto &tx : transactions)
+    {
+        if (tx.getDate().substr(0, 7) == month && tx.getType() == "Expense")
+        {
+            totalExpense += tx.getAmount();
+        }
+    }
+
+    double remaining = budgetLimit - totalExpense;
+
+    if (remaining < 0)
+    {
+        std::cout << "You've already spended more than your budget!\n Extra Money Spent" << -remaining << "\n";
+    }
+    else if (budgetLimit > 0 && totalExpense / budgetLimit >= 0.80)
+    {
+        std::cout << "Alert : You are nearing your budget \n Spended : " << totalExpense << " Budget : " << budgetLimit << "Remaining : " << remaining << "\n";
+    }
+    else
+    {
+        std::cout << "Spended : " << totalExpense << " Budget : " << budgetLimit << "Remaining : " << remaining << "\n";
     }
 }
 
@@ -119,7 +196,7 @@ void FinanceTracker::calculateMonthlySummary(const std::string &month) const
 
     for (const Transaction &t : transactions)
     {
-        if (t.getDate().length() >= 7 && t.getDate().substr() == month)
+        if (t.getDate().length() >= 7 && t.getDate().substr(0, 7) == month)
         {
             if (t.getType() == "Income")
             {
@@ -143,7 +220,8 @@ void FinanceTracker::calculateMonthlySummary(const std::string &month) const
     printCentered("Net Balance   : Rs. " + netStr.str() + "\n");
     printCentered("--------------------------------------------");
 }
+
 bool FinanceTracker::saveTransactions() const
 {
-    Storage::saveToFile("transactions.txt", transactions);
+    return Storage::saveToFile(filename, transactions);
 }

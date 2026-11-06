@@ -12,7 +12,13 @@ int main()
     do
     {
         printMenu();
-        std::cin >> choice;
+        if (!(std::cin >> choice))
+        {
+            std::cin.clear();
+            std::cin.ignore(10000, '\n');
+            choice = 0; // falls to "Invalid choice"
+            continue;
+        }
 
         switch (choice)
         {
@@ -60,7 +66,38 @@ int main()
             f.calculateMonthlySummary(month);
             break;
         }
+
         case 6:
+        {
+            std::string query;
+            std::cout << "Enter keyword like category or description :";
+            std::cin >> query;
+
+            f.searchTransactions(query);
+            break;
+        }
+        case 7:
+        {
+            std::string month;
+            double budget;
+            std::cout << "Enter Month in YYYY-MM format:";
+            std::cin >> month;
+            std::cout << "Enter Budget :";
+            std::cin >> budget;
+
+            f.setBudget(month, budget);
+            break;
+        }
+        case 8:
+        {
+            std::string month;
+            std::cout << "Enter Month in YYYY-MM format:";
+            std::cin >> month;
+            f.checkBudget(month);
+            break;
+        }
+
+        case 9:
         {
             std::cout << "\nExiting......\n";
             f.saveTransactions();
@@ -70,7 +107,7 @@ int main()
             std::cout << "\nInvalid choice. Please try again.\n";
             break;
         }
-    } while (choice != 4);
+    } while (choice != 9);
 
     return 0;
 }
