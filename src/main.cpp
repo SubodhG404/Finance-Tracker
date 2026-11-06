@@ -3,6 +3,7 @@
 #include <iostream>
 #include "Utils.h"
 #include "Menu.h"
+#include <algorithm>
 int main()
 {
 
@@ -28,13 +29,16 @@ int main()
             double amount;
             std::cout << "Enter type (e.g., Income/Expense): ";
             std::cin >> type;
+            std::transform(type.begin(), type.end(), type.begin(), ::tolower);
+            type[0] = std::toupper(type[0]);
 
             std::cout << "Enter Amount:";
             std::cin >> amount;
 
             std::cout << "Enter Category:";
-            std::cin >> category;
-            std::cin.ignore(); // clearing input buffer
+            std::cin >> std::ws;
+            std::getline(std::cin, category);
+
             std::cout << "Enter Description:";
             std::getline(std::cin, description);
 
@@ -71,8 +75,8 @@ int main()
         {
             std::string query;
             std::cout << "Enter keyword like category or description :";
-            std::cin >> query;
-
+            std::cin >> std::ws;
+            std::getline(std::cin, query);
             f.searchTransactions(query);
             break;
         }
